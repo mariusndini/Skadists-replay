@@ -40,14 +40,14 @@ public class Main {
 
     @OnCombatLogEntry
     public void onCombatLogEntry(CombatLogEntry cle) {
-        String time = GAMETIME_FORMATTER.print(Duration.millis((int) (1000.0f * cle.getTimestamp())).toPeriod());
+        String time = GAMETIME_FORMATTER.print(Duration.millis((int) (1000.0f * cle.getTimestampRaw())).toPeriod());
         //DotaUserMessages.DOTA_COMBATLOG_TYPES type = cle.getType();
         //log.info("\n{} ({}): {}", type.name(), type.ordinal(), cle);
 
         switch (cle.getType()) {
-            
+
             case DOTA_COMBATLOG_DAMAGE:
-                log.info("Time:{},Type:{},Atttacker:{},Target:{},Inflictor:{},Value:{},HP:{},NHP:{},LH:{},DmgType:{},DamageCategory:{},NetWorth:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Attacker\":\"{}\",\"Target\":\"{}\",\"Inflictor\":\"{}\",\"Value\":\"{}\",\"HP\":\"{}\",\"NHP\":\"{}\",\"LH\":\"{}\",\"DmgType\":\"{}\",\"DamageCategory\":\"{}\",\"NetWorth\":\"{}\"}",
                     time, cle.getType(),
                     getAttackerNameCompiled(cle),
                     getTargetNameCompiled(cle),
@@ -63,7 +63,7 @@ public class Main {
                 break;
                 
             case DOTA_COMBATLOG_HEAL:
-                log.info("Time:{},Type:{},Attacker:{},Inflictor:{},Target:{},Value:{},HP:{},NHP:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",Attacker:\"{}\",\"Inflictor\":\"{}\",\"Target\":\"{}\",\"Value\":\"{}\",\"HP\":\"{}\",\"NHP\":\"{}\"}",
                     time, cle.getType(),
                     getAttackerNameCompiled(cle),
                     cle.getInflictorName(),
@@ -75,7 +75,7 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_MODIFIER_ADD:
-                log.info("Time:{},Type:{},Taget:{},ModType:buff/debuff,Attacker:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Target\":\"{}\",\"ModType\":\"buff/debuff\",\"Attacker\":\"{}\"}",
                     time, cle.getType(),
                     getTargetNameCompiled(cle),
                     cle.getInflictorName(),
@@ -84,7 +84,7 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_MODIFIER_REMOVE:
-                log.info("Time:{},Type:{},Taget:{},ModType:buff/debuff,Attacker:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Target\":\"{}\",\"ModType\":\"buff/debuff\",\"Attacker\":\"{}\"}",
                     time, cle.getType(),
                     getTargetNameCompiled(cle),
                     cle.getInflictorName(),
@@ -93,7 +93,7 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_DEATH:
-                log.info("Time:{},Type:{},Taget:{},Attacker:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Target\":\"{}\",\"Attacker\":\"{}\"}",
                     time,cle.getType(),
                     getTargetNameCompiled(cle),
                     getAttackerNameCompiled(cle)
@@ -101,7 +101,7 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_ABILITY:
-                log.info("Time:{},Type:{},Attacker:{},Action:{},Inflictor:{},Level:{},Toggle:{},Target:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Attacker\":\"{}\",\"Action\":\"{}\",\"Inflictor\":\"{}\",\"Level\":\"{}\",\"Toggle\":\"{}\",\"Target\":\"{}\"}",
                     time,cle.getType(),
                     getAttackerNameCompiled(cle),
                     cle.isAbilityToggleOn() || cle.isAbilityToggleOff() ? "toggles" : "casts",
@@ -113,7 +113,7 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_ITEM:
-                log.info("Time:{},Type:{},Attacker:{},Inflictor:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Attacker\":\"{}\",\"Inflictor\":\"{}\"}",
                     time,cle.getType(),
                     getAttackerNameCompiled(cle),
                     cle.getInflictorName()
@@ -121,7 +121,7 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_GOLD:
-                log.info("Time:{},Type:{},Target:{},Direction:{},Gold:{},Reason:{},X:{},Y:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Target\":\"{}\",\"Direction\":\"{}\",\"Gold\":\"{}\",\"Reason\":\"{}\",\"X\":\"{}\",\"Y\":\"{}\"}",
                     time,cle.getType(),
                     getTargetNameCompiled(cle),
                     cle.getValue() < 0 ? "-" : "+",
@@ -133,21 +133,21 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_GAME_STATE:
-                log.info("Time:{},Type:{},State:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"State\":\"{}\"}",
                     time,cle.getType(),
                     cle.getValue()
                 );
                 break;
 
             case DOTA_COMBATLOG_FIRST_BLOOD:
-                log.info("Time:{},Type:{},AttackerTeam:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"AttackerTeam\":\"{}\"}",
                     time,cle.getType(),
                     cle.getAttackerTeam()
                 );
                 break;
 
             case DOTA_COMBATLOG_TEAM_BUILDING_KILL:
-                log.info("Time:{},Type:{},AttackerTeam:{},TargetTeam:{},Value:{},Units:{},Name:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"AttackerTeam\":\"{}\",\"TargetTeam\":\"{}\",\"Value\":\"{}\",\"Units\":\"{}\",\"Name\":\"{}\"}",
                     time,cle.getType(),
                     cle.getAttackerTeam(),
                     cle.getTargetTeam(),
@@ -159,7 +159,7 @@ public class Main {
                 break;
 
             case DOTA_COMBATLOG_MULTIKILL:
-                log.info("Time:{},Type:{},Attacker:{},Target:{},Value:{},Source:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Attacker\":\"{}\",\"Target\":\"{}\",\"Value\":\"{}\",\"Source\":\"{}\"}",
                     time,cle.getType(),
                     getAttackerNameCompiled(cle),
                     getTargetNameCompiled(cle),
@@ -169,7 +169,7 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_CRITICAL_DAMAGE:
-                log.info("Time:{},Type:{},Attacker:{},Target:{},Value:{},HP:{},TargetSource:{},DamageSource:{},Inflictor:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Attacker\":\"{}\",\"Target\":\"{}\",\"Value\":\"{}\",\"HP\":\"{}\",\"TargetSource\":\"{}\",\"DamageSource\":\"{}\",\"Inflictor\":\"{}\"}",
                     time,cle.getType(),
                     getAttackerNameCompiled(cle),
                     getTargetNameCompiled(cle),
@@ -182,7 +182,7 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_XP:
-                log.info("Time:{},Type:{},Target:{},XP:{},Reason:{},X:{},Y:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Target\":\"{}\",\"XP\":\"{}\",\"Reason\":\"{}\",\"X\":\"{}\",\"Y\":\"{}\"}",
                     time,cle.getType(),
                     getTargetNameCompiled(cle),
                     cle.getValue(),
@@ -193,7 +193,7 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_PURCHASE:
-                log.info("Time:{},Type:{},Target:{},Value:{},NetWorth:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Target\":\"{}\",\"Value\":\"{}\",\"NetWorth\":\"{}\"}",
                     time,cle.getType(),
                     getTargetNameCompiled(cle),
                     cle.getValueName(),
@@ -202,21 +202,21 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_BUYBACK:
-                log.info("Time:{},Type:{},Value:{}",
+                log.info("{\"Time\":{}\",\"Type\":\"{}\",\"Value\":\"{}\"}",
                     time,cle.getType(),
                     cle.getValue()
                 );
                 break;
             
             case DOTA_COMBATLOG_ABILITY_TRIGGER:
-                log.info("Time:{},Type:{},Value:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Value\":\"{}\"}",
                     time,cle.getType(),
                     cle.getValue()
                 );
                 break;
 
             case DOTA_COMBATLOG_MODIFIER_STACK_EVENT:
-                log.info("Time:{},Type:{},Target:{},Attacker:{},Value:{},StunDuration:{},SlowDuration:{},LH:{},NW:{},ObsPlaced:{},DamageSource:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Target\":\"{}\",\"Attacker\":\"{}\",\"Value\":\"{}\",\"StunDuration\":\"{}\",\"SlowDuration\":\"{}\",\"LH\":\"{}\",\"NW\":\"{}\",\"ObsPlaced\":\"{}\",\"DamageSource\":\"{}\"}",
                     time,cle.getType(),
                     getTargetNameCompiled(cle),
                     getAttackerNameCompiled(cle),
@@ -231,7 +231,7 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_PLAYERSTATS:
-                log.info("Time:{},Type:{},Target:{},Attacker:{},Value:{},StunDuration:{},SlowDuration:{},LH:{},NW:{},ObsPlaced:{},DamageSource:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Target\":\"{}\",\"Attacker\":\"{}\",\"Value\":\"{}\",\"StunDuration\":\"{}\",\"SlowDuration\":\"{}\",\"LH\":\"{}\",\"NW\":\"{}\",\"ObsPlaced\":\"{}\",\"DamageSource\":\"{}\"}",
                     time,cle.getType(),
                     getTargetNameCompiled(cle),
                     getAttackerNameCompiled(cle),
@@ -246,7 +246,7 @@ public class Main {
                 break;
             
             case DOTA_COMBATLOG_KILLSTREAK:
-                log.info("Time:{},Type:{},Value:{},Target:{},Attacker:{},TargetSource:{}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Value\":\"{}\",\"Target\":\"{}\",\"Attacker\":\"{}\",\"TargetSource\":\"{}\"}",
                     time,cle.getType(),
                     cle.getValue(),
                     cle.getTargetName(),
