@@ -1,0 +1,501 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <script src="js/jquery.sparkline.min.js"></script>
+
+    <script src="js/sql.js"></script>
+    <script src="js/SQLStats.js"></script>
+    <script src="js/timeline.js"></script>
+    <script src="js/plots.js"></script>
+    <script src="js/combatlog.js"></script>
+    
+    <script>
+        var starttime = (17*60) + 42; //00:17:42.500 // since the game has a draft it does not start at 00.00 but 14 mins after the draft
+    </script>
+
+    <style>
+        .br {
+            border-right: 1px solid white;
+        }
+
+        .bt {
+            border-top: 1px solid white;
+        }
+
+        .bb {
+            border-bottom: 1px solid white;
+        }
+
+        .ba {
+            border: 1px solid white;
+        }
+
+        .rad{
+            background-color: #99b898;
+            color:black;
+        }
+
+        .dire {
+            background-color: #e84a5f;
+            color:black
+        }
+
+        img{
+            background-size: cover;
+        }
+        .centerText {
+            width:100%;
+            text-align:center;
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        .modal-body, .modal-header, .modal-footer{
+            background-color: black;
+        }
+        .modebar{
+            display: none !important;
+        }
+    </style>
+
+</head>
+
+
+<body style='background-color: black;color:white'>    
+    <input id="time" type="number" onkeyup="setTime()" style='display:none'  onchange="setTime()" value="1"/>
+
+    <p><b>Game Minutes</b> Every in game minute is logged below. With seconds underneath. </p>
+    <div style="overflow: auto; white-space: nowrap">
+        <table>
+            <tr class='centerText' id='min-stats'></tr>
+            <tr id='game-timeline'></tr>
+        </table>
+    </div>
+    <br>
+    <div style="overflow: auto; white-space: nowrap">
+        <table id='seconds-table'>
+            <tr class='centerText' id='game-sec-stats'></tr>
+            <tr class='centerText' id='game-seconds'></tr>
+        </table>
+    </div>
+
+
+    <br>
+
+    <table>
+    <tr>
+        <td><!-- VIDEO -->
+            <video id='dota2GameVid' width="830" >
+                <!-- <source src="Dota2Game.webm" type="video/webm"> -->
+                <source src="dota2FinalBigTimer.mp4" type="video/webm">
+            </video>
+            <br>            
+        </td><!-- END VIDEO -->
+
+
+
+        <td><!-- TOP STATS -->
+            <table>
+                <tr>
+                    <td colspan="10"> 
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#GoldXPModal">&#128202; Advantage</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#bracketPModal">	&#127941; Bracket</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mapModal">&#128506; Map</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#secondModal">&#128214; Game Log</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="10">
+                        <span id='rank-0'></span>
+                        <span id='rank-1'></span>
+                        <span id='rank-2'></span>
+                        <span id='rank-3'></span>
+                        <span id='rank-4'></span>
+
+                        <span id='rank-5'></span>
+                        <span id='rank-6'></span>
+                        <span id='rank-7'></span>
+                        <span id='rank-8'></span>
+                        <span id='rank-9'></span>
+                        
+                    </td>
+                </tr>
+                
+                <tr style='font-size: 20px;margin:0px;'>
+                    <td class='rad' colspan="4"><h1 style='padding-left: 20px;'><span style='font-size:20px;padding:0px;margin:0px;'>Radiant</span><br><img src='img/Tundra.png' height='50px'>Tundra ESports</h1></td>
+                    <td colspan="2" style='text-align:center;background-color: #fecea8;color:black' ><h1 id='all-kda'>0-0</h1></td>
+                    <td class='dire' colspan="4"><h1 style='padding-left: 20px;margin:0px;'><span style='font-size:20px'>Dire</span><br><img src='img/og_logo.png' height='50px'>Team OG</h1></td>
+                </tr>
+
+                <tr style='font-size: 16px; font-weight: 900;'>
+                    <td>Player</td>
+                    <td>Hero</td>
+                    <td><span style='font-size:25px'>&#9876;</span>P</td>
+                    <td >&#128081;Gold</td>
+                    <td class='br'>K-D</td>
+
+                    <td>K-D</td>
+                    <td>Player</td>
+                    <td>Hero</td>
+                    <td><span style='font-size:25px'>&#9876;</span>P</td>
+                    <td>&#128081;Gold</td>
+                    
+                </tr>
+
+                <tr ><!-- PLAYER STATS BELOW-->
+                    <td rowspan="2" class='bb'>Skiter<br>
+                        <img src='https://ggscore.com/media/logo/p3400.png?100' height='70px'>
+                    </td>
+                    <td rowspan="2" class='bb'>Luna<br>
+                        <img id='icon-1' src='img/luna_icon.png' height='50px'>
+                    </td>
+                    <td><span id='spark-xp-good1'></span></td>
+                    <td ><span id='spark-gold-good1'></span></td>
+                    <td class='br' id='kda-1'>&#128481;<br>&#128128;</td>
+                    
+                    <!-- PLAYER 2-->
+                    <td style='text-align: right;' id='kda-6'>&#128481;<br>&#128128;</td>
+                    <td rowspan="2" class='bb'>SumaiL<br>
+                        <img src='https://r5d4b7t7.stackpathcdn.com/wp-content/uploads/2021/07/sumail1.png' height='70px'>
+                    </td>
+                    <td rowspan="2" class='bb'>Templar Assassin<br>
+                        <img id='icon-6' src='img/templar_assassin_icon.png' height='50px'>
+                    </td>
+                    <td><span id='spark-xp-bad1'></span></td>
+                    <td><span id='spark-gold-bad1'></td>
+                </tr>
+                <tr><!--2nd level stats-->
+                    <td colspan="3" class='bb br' >
+                        <span id='cs-plyr1'></span>
+                        <span id='tgold-1'></span>
+                        <span id='xp-1'></span>
+                    </td>
+                    <td></td>
+                    <td colspan="3" class='bb' >
+                        
+                        <span id='cs-plyr6'></span>
+                        <span id='tgold-6'></span>
+                        <span id='xp-6'></span>
+                    </td> 
+                </tr>
+
+                <tr>
+                    <!-- TEAM ONE-->
+                    <td rowspan="2" class='bb'>Nine<br>
+                        <img src='https://cq.ru/storage/uploads/players/1149632/1.jpg' height='70px'>
+                    </td>
+                    <td rowspan="2" class='bb'>Void Spirit<br>
+                        <img id='icon-2' src='img/void_spirit_icon.png' height='50px'>
+                    </td>
+                    <td><span id='spark-xp-good2'></span></td>
+                    <td ><span id='spark-gold-good2'></span></td>
+                    <td class='br' id='kda-2'>&#128481;<br>&#128128;</td>
+
+                    <!-- TEAM TWO-->
+                    <td  style='text-align: right;' class='bt' id='kda-7'>&#128481;<br>&#128128;</td>
+                    <td rowspan="2" class='bb'>Topson<br>
+                        <img src='https://img.redbull.com/images/c_limit,w_1500,h_1000,f_auto,q_auto/redbullcom/2019/08/02/6fdd0e26-cac4-4691-9463-2dcfafb7f861/topias-topson-taavitsainen-dota-profile.png' height='70px'>
+                    </td>
+                    <td rowspan="2" class='bb'>Invoker<br>
+                        <img id='icon-7' src='img/invoker_icon.png' height='50px'>
+                    </td>
+                    <td><span id='spark-xp-bad2'></span></td>
+                    <td  ><span id='spark-gold-bad2'></td>
+                </tr>
+                <tr>
+                    <td colspan="3" class='bb br' >
+                        <span id='cs-plyr2'></span>
+                        <span id='tgold-2'></span>
+                        <span id='xp-2'></span>
+                    </td>
+                    <td></td>
+                    <td colspan="3" class='bb' >
+                        <span id='cs-plyr7'></span>
+                        <span id='tgold-7'></span>
+                        <span id='xp-7'></span>
+                    </td> 
+                </tr>
+
+                <tr>
+                    <!-- TEAM ONE-->
+                    <td rowspan="2" class='bb'>33<br>
+                        <img src='https://ggscore.com/media/logo/p2972.png' height='70px'>
+                    </td>
+                    <td rowspan="2" class='bb'>Brew Master<br>
+                        <img id='icon-3' src='img/brewmaster_icon.png' height='50px'>
+                    </td>
+                    <td><span id='spark-xp-good3'></span></td>
+                    <td  ><span id='spark-gold-good3'></span></td>
+                    <td  class='br' id='kda-3'>&#128481;<br>&#128128;</td>
+                    
+
+                    <!-- TEAM two-->
+                    <td style='text-align: right;' class='bt' id='kda-8'>&#128481;<br>&#128128;</td>
+
+                    <td rowspan="2" class='bb'>Ceb<br>
+                        <img src='https://egamersworld.com/uploads/dota2/players/og-dota2-7ckngmad-photo-1.png' height='70px'>
+                    </td>
+                    <td rowspan="2" class='bb'>Axe<br>
+                        <img id='icon-8' src='img/axe_icon.png' height='50px'>
+                    </td>
+                    <td><span id='spark-xp-bad3'></span></td>
+                    <td><span id='spark-gold-bad3'></td>
+                </tr>
+                <tr><!--2nd level stats-->
+                    <td colspan="3" class='bb  br' >
+                        <span id='cs-plyr3'></span>
+                        <span id='tgold-3'></span>
+                        <span id='xp-3'></span>
+                    </td>
+                    <td></td>
+                    <td colspan="3" class='bb' >
+                        <span id='cs-plyr8'></span>
+                        <span id='tgold-8'></span>
+                        <span id='xp-8'></span>
+                    </td> 
+                </tr>
+
+                <tr>
+                    <!-- TEAM ONE -->
+                    <td rowspan="2" class='bb'>Sneyking<br>
+                        <img src='img/sneyking.png' height='70px'>
+                    </td></td>
+                    <td rowspan="2" class='bb'>Mirana<br>
+                        <img id='icon-4' src='img/mirana_icon.png' height='50px'>
+                    </td>
+                    <td><span id='spark-xp-good4'></span></td>
+                    <td  ><span id='spark-gold-good4'></span></td>
+                    <td class='br' id='kda-4'>&#128481;<br>&#128128;</td>
+
+                    <!-- TEAM TWO-->
+                    <td  style='text-align: right;' class='bt' id='kda-9'>&#128481;<br>&#128128;</td>
+
+                    <td rowspan="2" class='bb'>Saksa<br>
+                        <img src='https://img.abiosgaming.com/players/Saksa-Player-picture-DOTA2-2019.png' height='70px'>
+                    </td>
+                    <td rowspan="2" class='bb'>Dark Willow<br>
+                        <img id='icon-9' src='img/dark_willow_icon.png' height='50px'>
+                    </td>
+                    <td><span id='spark-xp-bad4'></span></td>
+                    <td ><span id='spark-gold-bad4'></td>
+                </tr>
+                <tr><!--2nd level stats-->
+                    <td colspan="3" class='bb br' >
+                        <span id='cs-plyr4'></span>
+                        <span id='tgold-4'></span>
+                        <span id='xp-4'></span>
+                    </td>
+                    <td></td>
+                    <td colspan="3" class='bb' >
+                        <span id='cs-plyr9'></span>
+                        <span id='tgold-9'></span>
+                        <span id='xp-9'></span>
+                    </td> 
+                </tr>
+
+                <tr>
+                    <!-- TEAM 1-->
+                    <td rowspan="2" class='bb'>Fata<br>
+                        <img src='https://ggscore.com/media/logo/p1596.png' height='70px'>
+                    </td>
+                    <td rowspan="2" class='bb'>Nyx Assassin<br>
+                        <img id='icon-5' src='img/nyx_assassin_icon.png' height='50px'>
+                    </td>
+                    <td><span id='spark-xp-good5'></span></td>
+                    <td  ><span id='spark-gold-good5'></span></td>
+                    <td class='br' id='kda-5'>&#128481;<br>&#128128;</td>
+
+                    <!-- TEAM TWO-->
+                    <td style='text-align: right;' class='bt' id='kda-10'>&#128481;<br>&#128128;</td>
+
+                    <td rowspan="2" class='bb'>N0tail<br>
+                        <img src='https://upload.wikimedia.org/wikipedia/commons/1/11/The_International_2018_%2842413912070%29_%28cropped%29.jpg' height='70px'>
+                    </td>
+                    <td rowspan="2" class='bb'>Shadow Demon<br>
+                        <img id='icon-10' src='img/shadow_demon_icon.png' height='50px'>
+                    </td>
+                    <td><span id='spark-xp-bad5'></span></td>
+                    <td><span id='spark-gold-bad5'></td>
+                </tr>
+                <tr><!--2nd level stats-->
+                    <td colspan="3" class='bb br' >
+                        <span id='cs-plyr5'></span>
+                        <span id='tgold-5'></span>
+                        <span id='xp-5'></span>
+                    </td>
+                    <td></td>
+                    <td colspan="3" class='bb' >
+                        <span id='cs-plyr10'></span>
+                        <span id='tgold-10'></span>
+                        <span id='xp-10'></span>
+                    </td> 
+                </tr>
+
+                
+            </table>
+
+        </td>
+    </tr>
+
+
+    </table>
+
+
+
+
+
+<!-- MODALS -->
+
+<!-- GOLD/XP - Modal -->
+<div class="modal fade" id="GoldXPModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">GOLD/XP Advantage</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body justify-content-center">
+            <div style='width:100%' id='gold-XP-Chart-compare'></div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- SECONDS EVENTS - Modal -->
+<div class="modal fade" id="secondModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="exampleModalLabel">Game Event(s)</h3>
+
+          <!--INLINE BOX-->
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="cb-damage" value="1" checked>
+            <label class="form-check-label" for="inlineCheckbox1">Damage</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="cb-ability" value="2" checked>
+            <label class="form-check-label" for="inlineCheckbox2">Ability</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="cb-mods" value="3" checked>
+            <label class="form-check-label" for="inlineCheckbox3">Modifiers</label>
+          </div>
+            <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="cb-gold" value="4" checked>
+            <label class="form-check-label" for="inlineCheckbox3">gold</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="cb-items" value="5" checked>
+            <label class="form-check-label" for="inlineCheckbox3">Items</label>
+          </div>
+
+
+
+
+
+          
+          <input id="time-sec-start" style="color:black" type="string"  />
+          <input id="time-sec-end" style="color:black" type="string" />
+          <button class="btn btn-primary" onclick='getSecondsByInput()'>GO</button>
+
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body justify-content-center">
+            <div id='second-game-events'></div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- GOLD/XP - Modal -->
+<div class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Dota2 Map</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body justify-content-center">
+            <img src='img/map.png' height='800px'>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- Bracker - Modal -->
+<div class="modal fade" id="bracketPModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">GOLD/XP Advantage</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body justify-content-center">
+            <img src='img/bracket.png' width="900px">
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+       $("body").keydown(function(e) {
+        if(e.keyCode == 74) { // left
+            var vid = document.getElementById("dota2GameVid");
+            var inputTime = vid.currentTime;
+            vid.currentTime = inputTime - 0.25;
+        }else if(e.keyCode == 76) { // right
+            var vid = document.getElementById("dota2GameVid");
+            var inputTime = vid.currentTime;
+            vid.currentTime = inputTime + 0.25;
+        }
+    });
+  </script>
+
+
+</body>
+
+
+
+
+
+
+
+</html>

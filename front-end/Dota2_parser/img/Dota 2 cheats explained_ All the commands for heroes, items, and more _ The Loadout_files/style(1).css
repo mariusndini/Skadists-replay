@@ -1,0 +1,47 @@
+.bannerSize {
+	width: 728px;
+	height: 90px;
+}
+
+#logo {
+	background: url(img/logo.png) no-repeat;
+	background-size: contain;
+
+}
+
+
+#background1 {
+	background: url(img/background1.jpg) no-repeat;
+	background-size: contain;
+
+}
+#background2 {
+	background: url(img/background2.jpg) no-repeat;
+	background-size: contain;
+
+}
+#background3 {
+	background: url(img/background3.jpg) no-repeat;
+	background-size: contain;
+
+}
+#background4 {
+	background: url(img/background4.jpg) no-repeat;
+	background-size: contain;
+
+}
+
+
+
+
+#text1 {
+	background: url(img/text1.png) no-repeat;
+	background-size: contain;
+}
+
+#text2 {
+	background: url(img/text2.png) no-repeat;
+	background-size: contain;
+}
+
+

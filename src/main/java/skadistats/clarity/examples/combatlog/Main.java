@@ -40,7 +40,7 @@ public class Main {
 
     @OnCombatLogEntry
     public void onCombatLogEntry(CombatLogEntry cle) {
-        String time = GAMETIME_FORMATTER.print(Duration.millis((int) (1000.0f * cle.getTimestampRaw())).toPeriod());
+        String time = GAMETIME_FORMATTER.print(Duration.millis((int) (1000.0f * cle.getTimestamp())).toPeriod());
         //DotaUserMessages.DOTA_COMBATLOG_TYPES type = cle.getType();
         //log.info("\n{} ({}): {}", type.name(), type.ordinal(), cle);
 
@@ -63,7 +63,7 @@ public class Main {
                 break;
                 
             case DOTA_COMBATLOG_HEAL:
-                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",Attacker:\"{}\",\"Inflictor\":\"{}\",\"Target\":\"{}\",\"Value\":\"{}\",\"HP\":\"{}\",\"NHP\":\"{}\"}",
+                log.info("{\"Time\":\"{}\",\"Type\":\"{}\",\"Attacker\":\"{}\",\"Inflictor\":\"{}\",\"Target\":\"{}\",\"Value\":\"{}\",\"HP\":\"{}\",\"NHP\":\"{}\"}",
                     time, cle.getType(),
                     getAttackerNameCompiled(cle),
                     cle.getInflictorName(),
@@ -258,7 +258,7 @@ public class Main {
 
             default:
                 DotaUserMessages.DOTA_COMBATLOG_TYPES type = cle.getType();
-                log.info("\n{} ({}): {}\n", type.name(), type.ordinal(), cle);
+                log.info("\n{} \"({})\": {}\n", type.name(), type.ordinal(), cle);
                 break;
 
         }
@@ -270,9 +270,11 @@ public class Main {
         long tMatch = System.currentTimeMillis() - tStart;
         //log.info("total time taken: {}s", (tMatch) / 1000.0);
     }
-
+    
+    //input stream
     public static void main(String[] args) throws Exception {
         new Main().run(args);
     }
+
 
 }

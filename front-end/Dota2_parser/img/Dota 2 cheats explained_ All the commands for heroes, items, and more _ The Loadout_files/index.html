@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)https://s0.2mdn.net/10123238/1628788574300/728x90/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="ad.size" content="width=728,height=90">
+	<title>Sephora</title>
+
+	<!-- ONLY USE ENABLER.JS WHEN UPLOADING INTO DC STUDIO -->
+	<!-- <script src="https://s0.2mdn.net/ads/studio/Enabler.js"></script> -->
+	<script src="./tweenmax_2.1.2_min.js"></script>
+	<script type="text/javascript">var clickTag = "http://www.google.com";</script>
+
+	<link href="./default.min.css" rel="stylesheet" media="all">
+	<link href="./style(1).css" rel="stylesheet" media="all">
+
+	<script src="./imagesloaded.pkgd.min.js"></script>
+	<script src="./main(1).js"></script>
+<script type="text/javascript">
+    
+  (function() {
+    var MAX_URL_PARAM_LENGTH = 34;
+    var CLICK_X_URL_KEY = 'nx';
+    var CLICK_Y_URL_KEY = 'ny';
+    var CREATIVE_DIMENSIONS_KEY = 'dim';
+    var AD_URL_PARAM = '&adurl=';
+
+    var relegateNavigation = '';
+    var urlParamMap = {};
+
+    urlParamMap[CLICK_X_URL_KEY] = null;
+    urlParamMap[CLICK_Y_URL_KEY] = null;
+    urlParamMap[CREATIVE_DIMENSIONS_KEY] = null;
+
+    var handleClickTagMessage = function(e) {
+      try {
+        var eventData = JSON.parse(e.data);
+      } catch (err) {
+        return;
+      }
+      if (eventData.isInitClickTag) {
+        if (eventData.clickTags) {
+          for (var i = 0; i < eventData.clickTags.length; i++) {
+            var clkTag = eventData.clickTags[i];
+            window[clkTag.name] = clkTag.url;
+          }
+        } else if (eventData.clickTag) {
+          window.clickTag = eventData.clickTag;
+        }
+        relegateNavigation = eventData.relegateNavigation;
+      }
+    };
+
+    var storeClickCoordinates = function(e) {
+      urlParamMap[CLICK_X_URL_KEY] = Math.round(e.clientX);
+      urlParamMap[CLICK_Y_URL_KEY] = Math.round(e.clientY);
+    };
+
+    var getCreativeDimensions = function() {
+      return window.innerWidth + 'x' + window.innerHeight;
+    }
+
+    var getExitClickParams = function(e) {
+      urlParamMap[CREATIVE_DIMENSIONS_KEY] = getCreativeDimensions();
+
+      var exitParams = '';
+      for (var key in urlParamMap) {
+        exitParams += '&' + key + '=';
+        if (urlParamMap[key] !== null) {
+          exitParams += urlParamMap[key];
+        }
+      }
+      return exitParams;
+    }
+
+    var appendExitClickParams = function(url) {
+      var adUrlIndex = url.toLowerCase().indexOf(AD_URL_PARAM);
+      var paramsToBeAdded = getExitClickParams();
+      if (adUrlIndex > -1 && paramsToBeAdded.length <= MAX_URL_PARAM_LENGTH) {
+        url = url.substr(0, adUrlIndex) + paramsToBeAdded +
+          url.substr(adUrlIndex);
+      };
+      return url;
+    };
+
+    if (open.call) {
+      window.open = function(open) {
+        return function(url, name, features) {
+          url = appendExitClickParams(url);
+          if (relegateNavigation === 'parent') {
+            var message = {'clickTag': url, 'isPostClickTag': true};
+            parent.postMessage(JSON.stringify(message), '*');
+          } else {
+            var args = [url, name];
+            if (features) {
+              args.push(features);
+            }
+            open.apply(window, args);
+          }
+        };
+      }(window.open);
+    }
+
+    if (window.addEventListener) {
+      window.addEventListener(
+          'message', handleClickTagMessage, false);
+      window.addEventListener('mousedown', storeClickCoordinates, true);
+    } else {
+      window.attachEvent('onmessage', handleClickTagMessage);
+    }
+  })();
+    
+  </script></head>
+
+<body>
+	<div class="bannerSize" id="viewport" style="opacity: 1; visibility: inherit;">
+
+		<!-- <div id="background" class="bannerSize" ></div> -->
+		<div class="bannerSize" id="background1" style="opacity: 1; visibility: inherit;"></div>
+		
+		<div class="bannerSize" id="background2" style="opacity: 1; visibility: inherit;"></div>
+		<div class="bannerSize" id="background3" style="opacity: 1; visibility: inherit;"></div>
+		<div class="bannerSize" id="background4" style="opacity: 1; visibility: inherit;"></div>
+		<div class="bannerSize" id="text1" style="opacity: 1; visibility: inherit;"></div>
+
+		<div class="bannerSize" id="logo" style="opacity: 1; visibility: inherit;"></div>
+		
+
+		<div id="border" class="bannerSize" style="opacity: 1; visibility: inherit;"></div>
+		<a id="clickable" class="bannerSize" href="javascript:void(window.open(window.clickTag, &#39;blank&#39;))"></a>
+
+	</div>
+
+	<script type="text/javascript">
+		var imgloads = document.querySelectorAll('div,img,svg');
+		var imgcount = 0;
+
+		for (var i = 0; i < imgloads.length; i++) {
+			imgloads[i].style.opacity = 0;
+		}
+
+		window.addEventListener("DOMContentLoaded", function () {
+			for (var i = 0; i < imgloads.length; i++) {
+				imagesLoaded(imgloads[i], { background: true }, function () {
+					imgcount++;
+					if (imgcount === imgloads.length) {
+						init();
+					}
+				})
+			}
+		}, false);
+	</script>
+
+
+</body></html>

@@ -1,0 +1,83 @@
+body .featherlight .featherlight-next {
+	right: 60px;
+  top: 75px;
+}
+body .featherlight .featherlight-previous {
+  right: 60px;
+  top: 155px;
+}
+body .featherlight .featherlight-next {
+  background-image: url("grey.svg");
+  background-position: 50% 0px;
+  
+  transform: rotate(180deg);
+}
+.featherlight .featherlight-content {
+  position: relative;
+}
+/* rtl:ignore */
+body .featherlight .featherlight-previous {
+  background-image: url("grey.svg");
+  background-position: 50% 0px;
+  
+}
+body .featherlight .featherlight-next:hover {
+  background-image: url("Orange.svg");
+}
+body .featherlight .featherlight-next:hover span {
+  
+}
+body .featherlight .featherlight-close {
+   background-image: url("Close_active.svg");
+   background-position: top left;
+}
+body .featherlight .featherlight-close:hover {
+  background-position: bottom left; 
+}
+body .featherlight .featherlight-previous:hover {
+  background-image: url("Orange.svg");
+}
+body .featherlight {
+
+}
+body .featherlight {
+
+}
+body .featherlight {
+
+}
+body .featherlight:last-of-type {
+  background: rgba(0,0,0,1);
+}
+
+@media(max-width: 900px) {
+
+  body .featherlight .featherlight-content {
+    padding-top: 35px;
+    padding-right: 17vw;
+  }
+
+  body .featherlight .featherlight-next {
+    right: 10%;
+  }
+  body .featherlight .featherlight-previous {
+    right: 10%;
+  }
+
+  body .featherlight .featherlight-close-icon {
+    right: 10%;
+  }
+}
+
+@media (max-width: 470px) {
+  body .featherlight .featherlight-next, body .featherlight .featherlight-previous {
+    background-position: -0px -10px;
+    height: 50px;
+  }
+  body .featherlight .featherlight-previous {
+    top: 135px;
+    
+  }
+
+
+}
